@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Математическое ожидание — интерактивный экран</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="bg-glow glow-a"></div>
+    <div class="bg-glow glow-b"></div>
+    <div class="bg-glow glow-c"></div>
+
+    <header class="topbar glass">
+      <div class="brand">
+        <div class="brand-mark">E(X)</div>
+        <div>
+          <p class="caps">Interactive math</p>
+          <h1 id="sceneTitle">Старт</h1>
+        </div>
+      </div>
+
+      <div class="progress-box">
+        <button id="restartButton" class="ghost-button" type="button">Начать сначала</button>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p class="progress-text" id="progressText">1 / 9</p>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="scene-rail glass">
+        <p class="caps accent">Разделы</p>
+        <div id="sceneTabs" class="scene-tabs"></div>
+      </aside>
+
+      <section class="stage glass">
+        <div class="scene active" data-title="Старт">
+          <div class="scene-grid two">
+            <article class="card hero-card">
+              <p class="caps accent">Тема</p>
+              <h2>Математическое ожидание дискретной случайной величины</h2>
+              <p>
+                Это компактный интерактивный экран: теория, примеры, графики, симуляция и квиз
+                собраны в одном пространстве. Меньше прокрутки, больше ощущения живой математики.
+              </p>
+              <div class="hero-actions">
+                <button id="heroNextButton" class="primary-button" type="button">Начать</button>
+                <button class="secondary-button jump-button" data-jump="4" type="button">Сразу к конструктору</button>
+              </div>
+              <div class="chip-row">
+                <span class="chip">Точка баланса</span>
+                <span class="chip">PMF/CDF графики</span>
+                <span class="chip">Симуляция</span>
+              </div>
+            </article>
+
+            <article class="card hero-visual">
+              <p class="caps">Интуиция</p>
+              <div class="hero-dice">
+                <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div>
+              </div>
+              <div class="formula-pill">
+                <span>E(X) = (1 + 2 + 3 + 4 + 5 + 6) / 6</span>
+                <strong>3.5</strong>
+              </div>
+              <canvas id="heroSparkCanvas" width="620" height="170" aria-label="График сближения среднего"></canvas>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="Дискретная и непрерывная СВ">
+          <div class="scene-grid two">
+            <article class="card">
+              <p class="caps accent">Сначала разведем понятия</p>
+              <h2>Дискретная и непрерывная величина</h2>
+              <p>
+                <strong>Дискретная</strong> принимает отдельные значения: 0, 1, 2, 3... Мы можем
+                перечислить исходы и указать вероятность каждого.
+              </p>
+              <div class="mini-list">
+                <div><strong>Кубик:</strong> 1,2,3,4,5,6</div>
+                <div><strong>Лотерея:</strong> -100, 200, 1000</div>
+                <div><strong>Заявки в минуту:</strong> 0,1,2,3,...</div>
+              </div>
+              <div class="contrast-note">
+                <strong>Почему это важно:</strong> в этой презентации мы изучаем именно дискретный
+                случай, потому что там математическое ожидание считается как понятная взвешенная сумма
+                по таблице исходов.
+              </div>
+            </article>
+            <article class="card compare-card">
+              <div class="compare-block">
+                <h3>Дискретно</h3>
+                <p class="soft mini-soft">
+                  Есть набор отдельных точек. Между 2 и 3 нет нового исхода, если мы его явно не задали.
+                </p>
+                <div class="token-line">
+                  <span>0</span><span>1</span><span>2</span><span>3</span><span>...</span>
+                </div>
+                <p class="soft mini-soft">Примеры: число голов, очки на кубике, количество клиентов.</p>
+              </div>
+              <div class="compare-block">
+                <h3>Непрерывно</h3>
+                <p class="soft mini-soft">
+                  Можно взять любое значение на промежутке: 2.1, 2.13, 2.134... Перечислить все значения
+                  заранее уже нельзя.
+                </p>
+                <div class="continuum-visual">
+                  <div class="continuum"></div>
+                  <div class="continuum-points">
+                    <span>2.1</span><span>2.13</span><span>2.134</span><span>...</span>
+                  </div>
+                </div>
+                <p class="soft mini-soft">Примеры: время ожидания, рост, температура, длина детали.</p>
+              </div>
+              <div class="compare-summary">
+                <strong>Главная мысль:</strong> у непрерывной величины математическое ожидание тоже есть,
+                но его обычно находят уже не суммой, а через плотность и интеграл. Здесь оно нужно только
+                как контраст, чтобы было ясно, почему дальше работает формула <strong>E(X) = Σ xᵢ · pᵢ</strong>.
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="Смысл и формула E(X)">
+          <div class="scene-grid two">
+            <article class="card">
+              <p class="caps accent">Смысл</p>
+              <h2>Средний итог на длинной дистанции</h2>
+              <p>
+                Математическое ожидание не обещает конкретный следующий результат.
+                Оно показывает, куда тянется среднее при множестве испытаний.
+              </p>
+              <div class="formula-box">
+                <div class="formula-main">E(X) = Σ xᵢ · pᵢ</div>
+                <div class="formula-sub">каждый исход умножаем на его шанс и складываем</div>
+              </div>
+            </article>
+            <article class="card">
+              <p class="caps">Графика вклада</p>
+              <canvas id="contributionCanvas" width="620" height="300" aria-label="Вклады исходов в E(X)"></canvas>
+              <p class="soft">Чем выше вероятность, тем сильнее исход влияет на итоговую точку E(X).</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="3 быстрых примера">
+          <div class="scene-grid two">
+            <article class="card">
+              <div class="example-switch" id="exampleSwitch">
+                <button class="tiny-button active" data-example="dice" type="button">Кубик</button>
+                <button class="tiny-button" data-example="lottery" type="button">Лотерея</button>
+                <button class="tiny-button" data-example="custom" type="button">Свое распределение</button>
+              </div>
+              <h2 id="exampleTitle">Кубик</h2>
+              <p id="exampleDescription"></p>
+              <div class="formula-box">
+                <div id="exampleFormula" class="formula-main"></div>
+                <div id="exampleResult" class="formula-sub"></div>
+              </div>
+            </article>
+            <article class="card">
+              <p class="caps">График примера</p>
+              <canvas id="exampleCanvas" width="620" height="300" aria-label="График примера"></canvas>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="Конструктор распределения">
+          <div class="scene-grid two">
+            <article class="card">
+              <div class="row-top">
+                <h2>Редактор исходов</h2>
+                <div class="preset-row">
+                  <button class="tiny-button preset-button" data-preset="base" type="button">Базовый</button>
+                  <button class="tiny-button preset-button" data-preset="dice" type="button">Кубик</button>
+                  <button class="tiny-button preset-button" data-preset="risk" type="button">Риск</button>
+                </div>
+              </div>
+              <div id="editorRows" class="editor-rows"></div>
+            </article>
+            <article class="card">
+              <div class="kpi-grid">
+                <div class="kpi"><span>E(X)</span><strong id="kpiExpectation">0</strong></div>
+                <div class="kpi"><span>Диапазон</span><strong id="kpiRange">0...0</strong></div>
+                <div class="kpi"><span>Мода</span><strong id="kpiMode">0</strong></div>
+              </div>
+              <div class="formula-box compact">
+                <div id="liveFormula" class="formula-main"></div>
+              </div>
+              <canvas id="pmfCanvas" width="620" height="215" aria-label="PMF график"></canvas>
+              <canvas id="cdfCanvas" width="620" height="180" aria-label="CDF график"></canvas>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="Интуиция: точка баланса">
+          <div class="scene-grid two">
+            <article class="card">
+              <h2>Поставь опору туда, где реально баланс</h2>
+              <p class="soft">Вероятности играют роль веса. Чем вероятнее исход, тем тяжелее его вклад.</p>
+              <div class="balance-toolbar">
+                <div><span>Твоя точка</span><strong id="balanceGuess">0</strong></div>
+                <div><span>Настоящее E(X)</span><strong id="balanceTarget">0</strong></div>
+              </div>
+              <input id="balanceSlider" type="range" min="-10" max="10" step="0.1" value="0">
+              <div class="hero-actions">
+                <button id="revealBalance" class="secondary-button" type="button">Показать ответ</button>
+                <button id="snapBalance" class="primary-button" type="button">Поставить в E(X)</button>
+              </div>
+              <p id="balanceFeedback" class="soft"></p>
+            </article>
+            <article class="card">
+              <svg id="balanceSvg" viewBox="0 0 700 320" role="img" aria-label="Баланс распределения"></svg>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="Симуляция длинной дистанции">
+          <div class="scene-grid two">
+            <article class="card sim-main">
+              <div class="sim-controls">
+                <button class="tiny-button sim-run" data-count="200" type="button">200</button>
+                <button class="tiny-button sim-run" data-count="1200" type="button">1200</button>
+                <button class="tiny-button sim-run" data-count="6000" type="button">6000</button>
+                <button id="simPause" class="ghost-button" type="button">Пауза</button>
+                <button id="simReset" class="ghost-button" type="button">Сброс</button>
+              </div>
+              <canvas id="simCanvas" width="620" height="315" aria-label="Симуляция среднего"></canvas>
+              <p id="simStatus" class="soft">Запусти серию испытаний.</p>
+            </article>
+            <article class="card sim-side">
+              <div class="kpi-grid single">
+                <div class="kpi"><span>Испытаний</span><strong id="simKpiCount">0</strong></div>
+                <div class="kpi"><span>Текущее среднее</span><strong id="simKpiMean">—</strong></div>
+                <div class="kpi"><span>Теоретическое E(X)</span><strong id="simKpiTarget">—</strong></div>
+                <div class="kpi"><span>Отклонение</span><strong id="simKpiGap">—</strong></div>
+              </div>
+              <div id="simRecent" class="recent"></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="Мини-квиз">
+          <div class="scene-grid two">
+            <article class="card">
+              <p class="caps accent">Вопрос <span id="quizStep">1</span> / 5</p>
+              <h2 id="quizQuestion"></h2>
+              <div id="quizOptions" class="quiz-options"></div>
+              <div class="hero-actions">
+                <button id="quizPrev" class="secondary-button" type="button">Назад</button>
+                <button id="quizNext" class="secondary-button" type="button">Дальше</button>
+                <button id="quizCheck" class="primary-button" type="button">Проверить</button>
+              </div>
+            </article>
+            <article class="card">
+              <h3>Результат</h3>
+              <div id="quizResult" class="result-box">Ответь на вопросы и нажми “Проверить”.</div>
+              <p id="quizHint" class="soft">Подсказка: ожидание — это средний итог длинной серии, а не обещание одного испытания.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="scene" data-title="Итог">
+          <div class="scene-grid two">
+            <article class="card">
+              <p class="caps accent">Финал</p>
+              <h2>Что важно унести с собой</h2>
+              <div class="mini-list">
+                <div><strong>1.</strong> E(X) учитывает и значения, и вероятности.</div>
+                <div><strong>2.</strong> Это центр тяжести распределения.</div>
+                <div><strong>3.</strong> На длинной дистанции среднее стремится к E(X).</div>
+                <div><strong>4.</strong> Отрицательное ожидание = долгосрочно невыгодно.</div>
+              </div>
+              <div class="hero-actions">
+                <button id="restartEnd" class="primary-button" type="button">Пройти снова</button>
+              </div>
+            </article>
+            <article class="card finish-card">
+              <canvas id="finishCanvas" width="620" height="300" aria-label="Итоговый график"></canvas>
+              <p class="soft">График показывает: чем больше испытаний, тем меньше разрыв между средним и E(X).</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="nav-row glass">
+      <button id="prevScene" class="secondary-button" type="button">Назад</button>
+      <p id="sceneLabel">Раздел 1</p>
+      <button id="nextScene" class="primary-button" type="button">Дальше</button>
+    </footer>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
